@@ -5,6 +5,20 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
+const NAV_LINKS = [
+  { label: 'Features',     href: '#features' },
+  { label: 'How it works', href: '#how-it-works' },
+  { label: 'Reputation',   href: '#reputation' },
+  { label: 'FAQ',          href: '#faq' },
+]
+
+const drawerMotion = {
+  initial: { opacity: 0, y: -10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 },
+  transition: { duration: 0.2, ease: 'easeOut' },
+}
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -12,57 +26,27 @@ export function Navbar() {
     <>
       <header className="fixed top-0 left-0 right-0 z-[201] flex justify-center bg-transparent border-b border-white/0 transition-all duration-300">
         <div className="w-full max-w-[1440px] mx-auto px-5 min-[476px]:px-8 md:px-5 py-4 min-[1000px]:py-0 min-[1000px]:pt-[26px] min-[1000px]:pb-[23px] flex items-center justify-between">
-          
-          {/* Logo */}
-          <Link href="/" aria-label="Home" className="shrink-0 flex items-center">
-            <svg width="126" height="26" viewBox="0 0 126 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="block h-[18px] w-auto min-[1000px]:h-[26px]">
-              <path d="M116.384 22.0101H111.751V20.8572H112.904V11.5848H111.751V10.4249H112.904V9.26497H114.064V8.10504H115.224V10.4249H116.384V11.5848H115.224V20.8572H116.384V22.0101ZM121.017 11.5848H118.704V10.4249H116.384V9.26497H121.017V11.5848Z" fill="white"></path>
-              <path d="M108.272 22.0107H102.48V20.8578H101.32V19.6979H100.16V17.378H99.0068V13.9053H100.16V11.5854H101.32V12.7454H108.272V11.5854H107.112V10.4255H102.48V9.26556H108.272V10.4255H109.432V11.5854H110.592V13.9053H101.32V17.378H102.48V19.6979H103.639V20.8578H108.272V22.0107ZM102.48 11.5854H101.32V10.4255H102.48V11.5854ZM110.592 19.6979H109.432V18.538H110.592V19.6979ZM109.432 20.8578H108.272V19.6979H109.432V20.8578Z" fill="white"></path>
-              <path d="M98.4375 22.0104H94.9577V20.8576H93.7978V19.6977H94.9577V11.5852H93.7978V10.4253H94.9577V3.47273H93.7978V2.31279H94.9577V1.15286H96.1176V0H97.2776V20.8576H98.4375V22.0104ZM93.7978 22.0104H89.1651V20.8576H88.0052V19.6977H86.8452V17.3778H85.6924V13.9051H86.8452V11.5852H88.0052V10.4253H89.1651V9.26532H93.7978V10.4253H90.325V11.5852H89.1651V13.9051H88.0052V17.3778H89.1651V19.6977H90.325V20.8576H93.7978V22.0104Z" fill="white"></path>
-              <path d="M75.8266 22.0101H71.194V20.8572H72.3468V11.5848H71.194V10.4249H72.3468V9.26497H73.5068V8.10504H74.6667V10.4249H75.8266V11.5848H74.6667V20.8572H75.8266V22.0101ZM84.5191 22.0101H79.8793V20.8572H81.0393V11.5848H79.8793V10.4249H75.8266V9.26497H81.0393V10.4249H82.1992V11.5848H83.3591V20.8572H84.5191V22.0101Z" fill="white"></path>
-              <path d="M64.2327 22.0107H60.18V20.8578H59.0201V19.6979H57.8601V10.4255H56.7073V9.26556H60.18V19.6979H61.3399V20.8578H64.2327V22.0107ZM70.0324 22.0107H66.5526V19.6979H65.3926V18.538H66.5526V10.4255H65.3926V9.26556H68.8724V20.8578H70.0324V22.0107ZM65.3926 20.8578H64.2327V19.6979H65.3926V20.8578Z" fill="white"></path>
-              <path d="M52.6497 22.0107H46.8571V20.8578H45.6972V19.6979H44.5373V17.378H43.3844V13.9053H44.5373V11.5854H45.6972V10.4255H46.8571V9.26556H52.6497V10.4255H53.8097V11.5854H54.9696V13.9053H56.1295V17.378H54.9696V19.6979H53.8097V20.8578H52.6497V22.0107ZM48.0171 20.8578H51.4898V19.6979H52.6497V17.378H53.8097V13.9053H52.6497V11.5854H51.4898V10.4255H48.0171V11.5854H46.8571V13.9053H45.6972V17.378H46.8571V19.6979H48.0171V20.8578Z" fill="white"></path>
-              <path d="M45.1416 3.47273H42.8288V1.15286H39.349V0H43.9816V1.15286H45.1416V3.47273ZM40.5089 22.0104H35.8762V20.8576H37.0291V10.4253H35.3033V9.26532H37.0291V3.47273H38.189V1.15286H39.349V9.26532H43.4017V10.4253H39.349V20.8576H40.5089V22.0104Z" fill="white"></path>
-              <path d="M31.2299 22.0107H25.4373V20.8578H24.2774V19.6979H23.1175V17.378H21.9646V13.9053H23.1175V11.5854H24.2774V10.4255H25.4373V9.26556H31.2299V10.4255H32.3899V11.5854H33.5498V13.9053H34.7097V17.378H33.5498V19.6979H32.3899V20.8578H31.2299V22.0107ZM26.5973 20.8578H30.07V19.6979H31.2299V17.378H32.3899V13.9053H31.2299V11.5854H30.07V10.4255H26.5973V11.5854H25.4373V13.9053H24.2774V17.378H25.4373V19.6979H26.5973V20.8578Z" fill="white"></path>
-              <path d="M20.2178 8.10526H19.0579V6.9524H17.9051V5.79246H16.7451V4.63253H9.79259V3.4726H19.0579V5.79246H20.2178V8.10526ZM9.79259 20.8575H7.47273V19.6975H6.31279V18.5376H5.15286V16.2177H4V9.26519H5.15286V6.9524H6.31279V5.79246H7.47273V4.63253H9.79259V5.79246H8.63266V6.9524H7.47273V9.26519H6.31279V16.2177H7.47273V18.5376H8.63266V19.6975H9.79259V20.8575ZM19.0579 22.0103H9.79259V20.8575H16.7451V19.6975H17.9051V18.5376H19.0579V17.3777H20.2178V19.6975H19.0579V22.0103Z" fill="white"></path>
-            </svg>
+
+          {/* PayMate Wordmark */}
+          <Link href="/" aria-label="PayMate home" className="shrink-0 flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-[7px] bg-brand text-black font-bold text-[15px]">P</span>
+            <span className="text-white font-semibold text-[18px] tracking-tight">PayMate</span>
           </Link>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation */}
           <div className="hidden min-[1000px]:flex items-center gap-3">
             <nav className="flex items-center gap-3">
               <div className="relative flex h-[41px] items-center pl-[14px] pr-[10px] rounded-[8px] glass-pill">
-                <span className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] pointer-events-none">
-                  <span className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white/60 font-medium">How to</span>
-                </span>
-                
-                <span className="relative mx-[7px] self-center shrink-0 w-[1px] h-[16px] bg-white/20"></span>
-                <span className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] hover:bg-white/10 transition-colors">
-                  <Link className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#start-section">Start</Link>
-                </span>
-                
-                <span className="relative mx-[7px] self-center shrink-0 w-[1px] h-[16px] bg-white/20"></span>
-                <span className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] hover:bg-white/10 transition-colors">
-                  <Link className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#build-section">Build</Link>
-                </span>
-
-                <span className="relative mx-[7px] self-center shrink-0 w-[1px] h-[16px] bg-white/20"></span>
-                <span className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] hover:bg-white/10 transition-colors">
-                  <Link className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#sell-section">Sell</Link>
-                </span>
-
-                <span className="relative mx-[7px] self-center shrink-0 w-[1px] h-[16px] bg-white/20"></span>
-                <span className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] hover:bg-white/10 transition-colors">
-                  <Link className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#scale-section">Scale</Link>
-                </span>
-              </div>
-
-              <div className="relative flex h-[41px] items-center justify-center rounded-[8px] px-[14px] glass-pill hover:bg-white/20 transition-all cursor-pointer">
-                <Link className="nav-link relative z-10 no-underline whitespace-nowrap text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#guides-section">Guides</Link>
-              </div>
-
-              <div className="relative flex h-[41px] items-center justify-center rounded-[8px] px-[14px] glass-pill hover:bg-white/20 transition-all cursor-pointer">
-                <Link className="nav-link relative z-10 no-underline whitespace-nowrap text-[15px] leading-[150%] tracking-[0.15px] text-white font-medium" href="#how-it-works">FAQ</Link>
+                {NAV_LINKS.map((link) => (
+                  <span key={link.href} className="group relative inline-flex items-center justify-center rounded-[4px] py-[2px] px-[5px] hover:bg-white/10 transition-colors">
+                    <Link
+                      className="nav-link relative z-10 no-underline whitespace-nowrap px-[6px] text-[15px] leading-[150%] tracking-[0.15px] text-white/80 hover:text-white font-medium"
+                      href={link.href}
+                    >
+                      {link.label}
+                    </Link>
+                  </span>
+                ))}
               </div>
 
               <ConnectButton.Custom>
@@ -70,10 +54,10 @@ export function Navbar() {
                   account ? (
                     <div className="flex items-center gap-3">
                       <Link href="/app/dashboard" className="group relative flex h-[41px] items-center justify-center rounded-[8px] px-[14px] glass-pill hover:bg-white/20 transition-all text-white text-[15px] font-medium">
-                        Console
+                        Dashboard
                       </Link>
                       <Link href="/app/dashboard" className="cta-btn group relative inline-flex items-center justify-center no-underline whitespace-nowrap cursor-pointer h-[41px] px-[16px] rounded-[8px] text-[15px] font-semibold text-black">
-                        Run a company
+                        Launch app
                       </Link>
                     </div>
                   ) : (
@@ -82,7 +66,7 @@ export function Navbar() {
                         Log in
                       </button>
                       <button onClick={openConnectModal} className="cta-btn group relative inline-flex items-center justify-center no-underline whitespace-nowrap cursor-pointer h-[41px] px-[16px] rounded-[8px] text-[15px] font-semibold text-black">
-                        Run a company
+                        Connect wallet
                       </button>
                     </div>
                   )
@@ -91,17 +75,17 @@ export function Navbar() {
             </nav>
           </div>
 
-          {/* Mobile Connect Button & Menu Button */}
+          {/* Mobile Buttons */}
           <div className="flex items-center min-[1000px]:hidden gap-3">
             <ConnectButton.Custom>
               {({ openConnectModal, account }) => (
                 account ? (
                   <Link href="/app/dashboard" className="cta-btn inline-flex items-center justify-center h-[41px] px-3.5 rounded-[8px] text-[14px] font-semibold text-black">
-                    Console
+                    Launch app
                   </Link>
                 ) : (
                   <button onClick={openConnectModal} className="cta-btn inline-flex items-center justify-center h-[41px] px-3.5 rounded-[8px] text-[14px] font-semibold text-black">
-                    Run a company
+                    Connect
                   </button>
                 )
               )}
@@ -123,31 +107,32 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
+            {...drawerMotion}
             className="fixed inset-0 top-[73px] z-[200] bg-[#09090b] px-6 py-8 flex flex-col gap-6 min-[1000px]:hidden border-t border-white/5"
           >
             <div className="flex flex-col gap-1">
-              <span className="text-[12px] uppercase font-mono tracking-widest text-zinc-600 mb-2">How to</span>
-              <Link onClick={() => setIsOpen(false)} href="#start-section" className="text-xl text-zinc-100 py-2 border-b border-zinc-800/40">Start a Company</Link>
-              <Link onClick={() => setIsOpen(false)} href="#build-section" className="text-xl text-zinc-100 py-2 border-b border-zinc-800/40">Build Products</Link>
-              <Link onClick={() => setIsOpen(false)} href="#sell-section" className="text-xl text-zinc-100 py-2 border-b border-zinc-800/40">Automate Sales</Link>
-              <Link onClick={() => setIsOpen(false)} href="#scale-section" className="text-xl text-zinc-100 py-2 border-b border-zinc-800/40">Scale with Agents</Link>
-            </div>
-
-            <div className="flex flex-col gap-2 mt-4">
-              <Link onClick={() => setIsOpen(false)} href="#guides-section" className="text-xl text-zinc-100 py-2">Guides</Link>
-              <Link onClick={() => setIsOpen(false)} href="#how-it-works" className="text-xl text-zinc-100 py-2">FAQ</Link>
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  onClick={() => setIsOpen(false)}
+                  href={link.href}
+                  className="text-xl text-zinc-100 py-2 border-b border-zinc-800/40"
+                >
+                  {link.label}
+                </Link>
+              ))}
             </div>
 
             <div className="mt-auto pb-8">
               <ConnectButton.Custom>
                 {({ openConnectModal, account }) => (
                   account ? (
-                    <Link onClick={() => setIsOpen(false)} href="/app/dashboard" className="w-full flex items-center justify-center py-4 bg-white text-black font-semibold rounded-xl text-lg">
-                      Go to Dashboard
+                    <Link
+                      onClick={() => setIsOpen(false)}
+                      href="/app/dashboard"
+                      className="w-full flex items-center justify-center py-4 bg-brand text-black font-semibold rounded-xl text-lg"
+                    >
+                      Launch app
                     </Link>
                   ) : (
                     <button
@@ -155,9 +140,9 @@ export function Navbar() {
                         setIsOpen(false)
                         openConnectModal()
                       }}
-                      className="w-full py-4 bg-white text-black font-semibold rounded-xl text-lg"
+                      className="w-full py-4 bg-brand text-black font-semibold rounded-xl text-lg"
                     >
-                      Connect Wallet
+                      Connect wallet
                     </button>
                   )
                 )}
