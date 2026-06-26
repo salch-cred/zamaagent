@@ -5,6 +5,10 @@ const RADIUS      = 54
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS
 const STROKE_DASH = (PERCENTAGE / 100) * CIRCUMFERENCE
 
+// Extracted to a const so the JSX uses a single-brace `style={...}` ref
+// (inline double-brace object literals were getting mangled on save).
+const dashAnimStyle = { transition: 'stroke-dasharray 1s ease' }
+
 const credentials = [
   { id: '#0001', title: 'Smart Contract Audit',   client: '0x1a2b...9f3e', date: 'Jun 12, 2026', amount: '🔐 Encrypted' },
   { id: '#0002', title: 'Frontend Development',   client: '0x7c8d...4a1f', date: 'May 28, 2026', amount: '🔐 Encrypted' },
@@ -34,8 +38,7 @@ export default function ReputationPage() {
               strokeLinecap="round"
               strokeDasharray={`${STROKE_DASH} ${CIRCUMFERENCE}`}
               transform="rotate(-90 70 70)"
-              // FIX: was `style= transition: 'stroke-dasharray 1s ease' `
-              style={{ transition: 'stroke-dasharray 1s ease' }}
+              style={dashAnimStyle}
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">

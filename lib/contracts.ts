@@ -22,6 +22,10 @@ export const CONTRACTS = {
     address: addr('NEXT_PUBLIC_AIRDROP_ADDRESS'),
     chainId: 11155111,
   },
+  ConfidentialReputation: {
+    address: addr('NEXT_PUBLIC_REPUTATION_ADDRESS'),
+    chainId: 11155111,
+  },
 } as const
 
 // Convenience flag — true once real addresses are configured.
@@ -29,6 +33,10 @@ export const CONTRACTS = {
 export const isConfigured = (): boolean =>
   CONTRACTS.ConfidentialPayroll.address !== ZERO &&
   CONTRACTS.ConfidentialInvoice.address !== ZERO
+
+// True once the reputation registry is deployed + configured.
+export const isReputationConfigured = (): boolean =>
+  CONTRACTS.ConfidentialReputation.address !== ZERO
 
 // ---------------------------------------------------------------------------
 // ABIs
@@ -147,5 +155,70 @@ export const INVOICE_ABI = [
       { name: 'isDisputed', type: 'bool' },
       { name: 'dueDate', type: 'uint256' },
     ],
+  },
+] as const
+
+// ReputationRegistry — public, verifiable reputation. Scores are plaintext by
+// design; only payment AMOUNTS stay encrypted (in ConfidentialInvoice).
+export const REPUTATION_ABI = [
+  {
+    name: 'reputationScore',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'subject', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'completedJobs',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: '', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'disputes',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: '', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'getCredentials',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'subject', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256[]' }],
+  },
+  {
+    name: 'getCredential',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'id', type: 'uint256' }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        components: [
+          { name: 'subject', type: 'address' },
+          { name: 'issuer', type: 'address' },
+          { name: 'invoiceId', type: 'uint256' },
+          { name: 'category', type: 'string' },
+          { name: 'issuedAt', type: 'uint64' },
+          { name: 'revoked', type: 'bool' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'issueCredential',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'subject', type: 'address' },
+      { name: 'issuer', type: 'address' },
+      { name: 'invoiceId', type: 'uint256' },
+      { name: 'category', type: 'string' },
+    ],
+    outputs: [{ name: '', type: 'uint256' }],
   },
 ] as const
