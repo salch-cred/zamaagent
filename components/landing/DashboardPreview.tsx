@@ -3,14 +3,14 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 const nodes = [
-  { name: 'Invoices',    x: 260, y:  77, details: 'Draft, send, and track FHE-encrypted invoices. Clients pay in USDC; amounts stay private on-chain.' },
-  { name: 'Payouts',     x: 384, y: 135, details: 'Instant stablecoin settlement via x402 rails. Funds land in your wallet in seconds, not days.' },
-  { name: 'Reputation',  x: 425, y: 260, details: 'Every paid invoice mints an ERC-8004 on-chain credential. Your score grows silently with every job.' },
-  { name: 'Payroll',     x: 384, y: 384, details: 'Confidential salary streams for collaborators. Amounts encrypted with TFHE.sol — nobody sees rates.' },
-  { name: 'AI Agent',    x: 260, y: 443, details: 'The PayMate AI agent proactively drafts invoices, reminds clients, and flags overdue payments.' },
-  { name: 'Contracts',   x: 135, y: 384, details: 'ConfidentialInvoice.sol, ConfidentialPayroll.sol, and ConfidentialAirdrop.sol deployed on Sepolia.' },
-  { name: 'Reveal',      x:  95, y: 260, details: 'EIP-712 sign + fhevmjs reencrypt flow. Decrypt your own balance privately — no third party sees it.' },
-  { name: 'cUSDT',       x: 135, y: 135, details: 'TokenOps confidential USDT bounty integration. Earn cUSDT rewards while keeping amounts hidden.' },
+  { name: 'Invoices',   x: 260, y:  77, details: 'Draft, send, and track FHE-encrypted invoices. Clients pay in USDC; amounts stay private on-chain.' },
+  { name: 'Payouts',    x: 384, y: 135, details: 'Instant stablecoin settlement via x402 rails. Funds land in your wallet in seconds, not days.' },
+  { name: 'Reputation', x: 425, y: 260, details: 'Every paid invoice mints an ERC-8004 on-chain credential. Your score grows silently with every job.' },
+  { name: 'Payroll',    x: 384, y: 384, details: 'Confidential salary streams for collaborators. Amounts encrypted with TFHE.sol — nobody sees rates.' },
+  { name: 'AI Agent',   x: 260, y: 443, details: 'The PayMate AI agent proactively drafts invoices, reminds clients, and flags overdue payments.' },
+  { name: 'Contracts',  x: 135, y: 384, details: 'ConfidentialInvoice.sol, ConfidentialPayroll.sol, and ConfidentialAirdrop.sol deployed on Sepolia.' },
+  { name: 'Reveal',     x:  95, y: 260, details: 'EIP-712 sign + fhevmjs reencrypt flow. Decrypt your own balance privately — no third party sees it.' },
+  { name: 'cUSDT',      x: 135, y: 135, details: 'TokenOps confidential USDT bounty integration. Earn cUSDT rewards while keeping amounts hidden.' },
 ]
 
 const headingAnim = {
@@ -45,72 +45,52 @@ export function DashboardPreview() {
           {/* SVG Orbit Graphic */}
           <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center bg-zinc-900/50 rounded-3xl border border-zinc-800 p-4">
             <svg viewBox="0 0 520 520" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Outer orbit */}
               <circle cx="260" cy="260" r="183" stroke="rgba(139,92,246,0.12)" strokeWidth="1" />
-              {/* Inner orbit */}
-              <circle cx="260" cy="260" r="90" stroke="rgba(34,197,94,0.08)" strokeWidth="1" />
+              <circle cx="260" cy="260" r="90"  stroke="rgba(34,197,94,0.08)"  strokeWidth="1" />
 
-              {/* Connecting lines */}
               {nodes.map((node) => (
                 <line
                   key={node.name}
-                  x1="260" y1="260"
-                  x2={node.x} y2={node.y}
+                  x1="260" y1="260" x2={node.x} y2={node.y}
                   stroke="rgba(255,255,255,0.06)"
-                  strokeWidth="1.2"
-                  strokeDasharray="4 4"
+                  strokeWidth="1.2" strokeDasharray="4 4"
                   className="orbit-line"
                 />
               ))}
 
               {/* Central node */}
               <circle cx="260" cy="260" r="44" fill="#18181b" stroke="rgba(34,197,94,0.3)" strokeWidth="1.5" />
-              <text x="260" y="257" textAnchor="middle" fill="#22C55E" fontSize="9" fontFamily="monospace" fontWeight="bold" letterSpacing="1">
-                PAYMATE
-              </text>
-              <text x="260" y="270" textAnchor="middle" fill="#8B5CF6" fontSize="7" fontFamily="monospace" letterSpacing="0.5">
-                fhEVM
-              </text>
+              <text x="260" y="257" textAnchor="middle" fill="#22C55E" fontSize="9" fontFamily="monospace" fontWeight="bold" letterSpacing="1">PAYMATE</text>
+              <text x="260" y="270" textAnchor="middle" fill="#8B5CF6" fontSize="7" fontFamily="monospace" letterSpacing="0.5">fhEVM</text>
 
               {/* Pulse dots */}
               {nodes.map((node, i) => {
-                const pulsAnim = {
+                const pulseAnim = {
                   initial: { cx: 260, cy: 260 },
                   animate: { cx: node.x, cy: node.y },
                   transition: { duration: 2, delay: i * 0.25, repeat: Infinity, repeatType: 'loop' as const, ease: 'linear' },
                 }
-                return (
-                  <motion.circle
-                    key={`pulse-${node.name}`}
-                    r="3"
-                    fill="#22C55E"
-                    {...pulsAnim}
-                  />
-                )
+                return <motion.circle key={`pulse-${node.name}`} r="3" fill="#22C55E" {...pulseAnim} />
               })}
             </svg>
 
             {/* DOM overlays */}
-            {nodes.map((node) => {
-              const leftPercent = `${(node.x / 520) * 100}%`
-              const topPercent  = `${(node.y / 520) * 100}%`
-              return (
-                <button
-                  key={node.name}
-                  onClick={() => setActiveNode(activeNode === node.name ? null : node.name)}
-                  onMouseEnter={() => setActiveNode(node.name)}
-                  onMouseLeave={() => setActiveNode(null)}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg text-xs font-medium font-mono border transition-all duration-200 ${
-                    activeNode === node.name
-                      ? 'bg-brand border-brand text-black shadow-glow-green scale-105'
-                      : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-brand hover:text-white'
-                  }`}
-                  style= left: leftPercent, top: topPercent 
-                >
-                  {node.name}
-                </button>
-              )
-            })}
+            {nodes.map((node) => (
+              <button
+                key={node.name}
+                onClick={() => setActiveNode(activeNode === node.name ? null : node.name)}
+                onMouseEnter={() => setActiveNode(node.name)}
+                onMouseLeave={() => setActiveNode(null)}
+                className={`absolute -translate-x-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg text-xs font-medium font-mono border transition-all duration-200 ${
+                  activeNode === node.name
+                    ? 'bg-brand border-brand text-black shadow-glow-green scale-105'
+                    : 'bg-zinc-900 border-zinc-700 text-zinc-300 hover:border-brand hover:text-white'
+                }`}
+                style={{ left: `${(node.x / 520) * 100}%`, top: `${(node.y / 520) * 100}%` }}
+              >
+                {node.name}
+              </button>
+            ))}
           </div>
 
           {/* Details card */}

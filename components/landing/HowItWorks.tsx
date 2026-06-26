@@ -9,28 +9,24 @@ const stages = [
     tab: 'Connect Wallet',
     subtitle: 'Start in 30 seconds',
     desc: 'Connect your MetaMask or RainbowKit wallet on Sepolia. PayMate instantly detects your address and initialises the fhEVM instance ready for encryption.',
-    preview: 'connect',
   },
   {
     id: 'invoice',
     tab: 'Create Invoice',
     subtitle: 'AI-drafted, FHE-encrypted',
     desc: 'Describe the project and amount. The AI agent creates the invoice, encrypts the amount with TFHE.sol, and sends it on-chain. The client sees a payment request — not the number.',
-    preview: 'invoice',
   },
   {
     id: 'reveal',
     tab: 'Reveal Balance',
     subtitle: 'EIP-712 sign → decrypt',
     desc: 'When you want to see your balance, sign a short EIP-712 message. fhevmjs re-encrypts the on-chain handle with your public key and decrypts it client-side. Nobody else can read it.',
-    preview: 'reveal',
   },
   {
     id: 'reputation',
     tab: 'Build Reputation',
     subtitle: 'Credentials that travel with you',
     desc: 'Every settled invoice mints an ERC-8004 on-chain credential. Your reputation score grows silently and travels to any platform that checks your wallet address.',
-    preview: 'reputation',
   },
 ]
 
@@ -68,11 +64,8 @@ export function HowItWorks() {
       ]
       let idx = 0
       const t = setInterval(() => {
-        if (idx < lines.length) {
-          setTerminalLogs(prev => [...prev, lines[idx++]])
-        } else {
-          clearInterval(t)
-        }
+        if (idx < lines.length) setTerminalLogs(prev => [...prev, lines[idx++]])
+        else clearInterval(t)
       }, 900)
       return () => clearInterval(t)
     }
@@ -88,14 +81,14 @@ export function HowItWorks() {
   }, [activeStage])
 
   const connectMilestones = [
-    { label: 'MetaMask detected',          done: true },
-    { label: 'Sepolia network confirmed',   done: true },
-    { label: 'fhEVM instance ready',        done: true },
-    { label: 'ACL contract found',          done: false },
+    { label: 'MetaMask detected',         done: true  },
+    { label: 'Sepolia network confirmed',  done: true  },
+    { label: 'fhEVM instance ready',       done: true  },
+    { label: 'ACL contract found',         done: false },
   ]
 
   return (
-    <section id="features" className="py-20 md:py-28 bg-zinc-950 border-t border-zinc-800">
+    <section id="how-it-works" className="py-20 md:py-28 bg-zinc-950 border-t border-zinc-800">
       <div className="max-w-[1100px] mx-auto px-6">
 
         <div className="w-full text-left mb-12">
@@ -164,8 +157,7 @@ export function HowItWorks() {
                     <div key={idx} className="flex items-center gap-3 p-2.5 rounded-lg bg-zinc-900 border border-zinc-800">
                       {m.done
                         ? <CheckCircle2 className="w-4 h-4 text-brand shrink-0" />
-                        : <div className="w-4 h-4 rounded-full border-2 border-zinc-700 shrink-0" />
-                      }
+                        : <div className="w-4 h-4 rounded-full border-2 border-zinc-700 shrink-0" />}
                       <span className="text-xs text-zinc-300">{m.label}</span>
                     </div>
                   ))}
@@ -207,9 +199,7 @@ export function HowItWorks() {
                   </div>
                   <div className="p-4 h-[180px] overflow-y-auto flex flex-col gap-1.5">
                     {terminalLogs.map((log, idx) => (
-                      <div key={idx} className={log.includes('✅') ? 'text-brand font-semibold' : 'text-zinc-400'}>
-                        {log}
-                      </div>
+                      <div key={idx} className={log.includes('✅') ? 'text-brand font-semibold' : 'text-zinc-400'}>{log}</div>
                     ))}
                     <div className="w-2 h-4 bg-zinc-500 animate-pulse mt-0.5" />
                   </div>

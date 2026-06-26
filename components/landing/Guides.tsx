@@ -2,42 +2,10 @@
 import { motion } from 'framer-motion'
 
 const guides = [
-  {
-    id: 1,
-    chapter: 'Guide 1',
-    title: 'Setup & Connect',
-    roman: 'I',
-    subtitle: 'Connect wallet, configure Sepolia, fund with test ETH.',
-    color: 'bg-zinc-900 text-zinc-100 border-zinc-700',
-    accent: '#22C55E',
-  },
-  {
-    id: 2,
-    chapter: 'Guide 2',
-    title: 'Create Invoice',
-    roman: 'II',
-    subtitle: 'Let the AI agent draft and send an FHE-encrypted invoice.',
-    color: 'bg-zinc-800 text-zinc-100 border-zinc-700',
-    accent: '#8B5CF6',
-  },
-  {
-    id: 3,
-    chapter: 'Guide 3',
-    title: 'Reveal Balance',
-    roman: 'III',
-    subtitle: 'EIP-712 sign, reencrypt with fhevmjs, see your earnings.',
-    color: 'bg-zinc-900 text-zinc-100 border-zinc-700',
-    accent: '#3B82F6',
-  },
-  {
-    id: 4,
-    chapter: 'Guide 4',
-    title: 'Build Reputation',
-    roman: 'IV',
-    subtitle: 'Paid invoices mint ERC-8004 credentials on-chain.',
-    color: 'bg-zinc-800 text-zinc-100 border-zinc-700',
-    accent: '#F59E0B',
-  },
+  { id: 1, chapter: 'Guide 1', title: 'Setup & Connect', roman: 'I',   subtitle: 'Connect wallet, configure Sepolia, fund with test ETH.', color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#22C55E' },
+  { id: 2, chapter: 'Guide 2', title: 'Create Invoice',  roman: 'II',  subtitle: 'Let the AI agent draft and send an FHE-encrypted invoice.', color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#8B5CF6' },
+  { id: 3, chapter: 'Guide 3', title: 'Reveal Balance',  roman: 'III', subtitle: 'EIP-712 sign, reencrypt with fhevmjs, see your earnings.',  color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#3B82F6' },
+  { id: 4, chapter: 'Guide 4', title: 'Build Reputation',roman: 'IV',  subtitle: 'Paid invoices mint ERC-8004 credentials on-chain.',          color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#F59E0B' },
 ]
 
 const bookFade = (i: number) => ({
@@ -54,7 +22,7 @@ const hoverTilt = {
 
 export function Guides() {
   return (
-    <section id="how-it-works" className="py-20 md:py-28 bg-zinc-950 border-t border-zinc-800">
+    <section id="guides" className="py-20 md:py-28 bg-zinc-950 border-t border-zinc-800">
       <div className="max-w-[1100px] mx-auto px-6">
 
         <div className="w-full text-center mb-16">
@@ -78,15 +46,21 @@ export function Guides() {
                 {...hoverTilt}
                 className={`book-card relative w-[140px] md:w-[175px] aspect-[3/4.2] rounded-r-lg border shadow-xl flex flex-col justify-between p-4 md:p-5 ${guide.color}`}
               >
-                {/* Spine */}
-                <div className="absolute top-0 bottom-0 left-[3px] w-[2px] rounded-full" style= backgroundColor: guide.accent  />
+                {/* Spine accent */}
+                <div
+                  className="absolute top-0 bottom-0 left-[3px] w-[2px] rounded-full"
+                  style= backgroundColor: guide.accent 
+                />
 
                 <div className="flex flex-col gap-1 border-b border-white/10 pb-2">
                   <span className="text-[10px] font-mono uppercase tracking-wider opacity-50">{guide.chapter}</span>
                   <h3 className="text-sm md:text-base font-bold font-mono tracking-tight leading-tight">{guide.title}</h3>
                 </div>
 
-                <div className="text-center font-serif italic opacity-20 my-3" style= fontSize: '2rem', color: guide.accent >
+                <div
+                  className="text-center font-serif italic opacity-20 my-3"
+                  style= fontSize: '2.5rem' 
+                >
                   {guide.roman}
                 </div>
 
