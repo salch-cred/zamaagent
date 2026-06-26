@@ -1,4 +1,5 @@
 'use client'
+import type { CSSProperties } from 'react'
 import { motion } from 'framer-motion'
 
 const guides = [
@@ -7,6 +8,9 @@ const guides = [
   { id: 3, chapter: 'Guide 3', title: 'Reveal Balance',   roman: 'III', subtitle: 'EIP-712 sign, reencrypt with fhevmjs, see your earnings.',  color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#3B82F6' },
   { id: 4, chapter: 'Guide 4', title: 'Build Reputation', roman: 'IV',  subtitle: 'Paid invoices mint ERC-8004 on-chain credentials.',          color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#F59E0B' },
 ]
+
+const spineStyle = (accent: string): CSSProperties => ({ backgroundColor: accent })
+const romanStyle: CSSProperties = { fontSize: '2.5rem' }
 
 const bookFade = (i: number) => ({
   initial:    { opacity: 0, y: 24 },
@@ -45,7 +49,7 @@ export function Guides() {
                 {/* Coloured spine line */}
                 <div
                   className="absolute top-0 bottom-0 left-[3px] w-[2px] rounded-full"
-                  style= backgroundColor: guide.accent 
+                  style={spineStyle(guide.accent)}
                 />
 
                 <div className="flex flex-col gap-1 border-b border-white/10 pb-2">
@@ -53,10 +57,7 @@ export function Guides() {
                   <h3 className="text-sm md:text-base font-bold font-mono tracking-tight leading-tight">{guide.title}</h3>
                 </div>
 
-                <div
-                  className="text-center font-serif italic opacity-20 my-3"
-                  style= fontSize: '2.2rem' 
-                >
+                <div className="text-center font-serif italic opacity-20 my-3" style={romanStyle}>
                   {guide.roman}
                 </div>
 
