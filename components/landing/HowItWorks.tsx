@@ -44,6 +44,8 @@ const previewAnim = {
   transition: { duration: 0.2 },
 }
 
+const progressBarTransition = { duration: 0.8, ease: 'easeOut' }
+
 export function HowItWorks() {
   const [activeStage, setActiveStage] = useState('connect')
   const [terminalLogs, setTerminalLogs] = useState<string[]>([])
@@ -81,10 +83,10 @@ export function HowItWorks() {
   }, [activeStage])
 
   const connectMilestones = [
-    { label: 'MetaMask detected',         done: true  },
-    { label: 'Sepolia network confirmed',  done: true  },
-    { label: 'fhEVM instance ready',       done: true  },
-    { label: 'ACL contract found',         done: false },
+    { label: 'MetaMask detected',        done: true  },
+    { label: 'Sepolia network confirmed', done: true  },
+    { label: 'fhEVM instance ready',      done: true  },
+    { label: 'ACL contract found',        done: false },
   ]
 
   return (
@@ -98,7 +100,6 @@ export function HowItWorks() {
           </h2>
         </div>
 
-        {/* Tab bar */}
         <div className="flex flex-wrap gap-2 md:gap-3 mb-10 border-b border-zinc-800 pb-4">
           {stages.map((s) => (
             <button
@@ -117,7 +118,6 @@ export function HowItWorks() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-stretch">
 
-          {/* Left: description */}
           <div className="lg:col-span-5 flex flex-col justify-center">
             <AnimatePresence mode="wait">
               {stages.filter(s => s.id === activeStage).map(s => (
@@ -143,7 +143,6 @@ export function HowItWorks() {
             </AnimatePresence>
           </div>
 
-          {/* Right: preview panel */}
           <div className="lg:col-span-7 bg-zinc-900/60 rounded-2xl p-6 border border-zinc-800 flex items-center justify-center min-h-[320px]">
             <AnimatePresence mode="wait">
 
@@ -231,7 +230,7 @@ export function HowItWorks() {
                       <motion.div
                         className="h-full bg-brand rounded-full"
                         animate={{ width: `${progress}%` }}
-                        transition= duration: 0.8, ease: 'easeOut' 
+                        transition={progressBarTransition}
                       />
                     </div>
                   </div>
