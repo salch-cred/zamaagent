@@ -28,6 +28,7 @@ contract ConfidentialPayroll is SepoliaZamaFHEVMConfig, GatewayCaller {
     event EmployeeRemoved(address indexed employee);
     event PaymentSent(address indexed employee);
     event PayrollDeposited(address indexed from);
+    event EmployerTransferred(address indexed previousEmployer, address indexed newEmployer);
 
     // -------------------------
     // Modifiers
@@ -85,7 +86,28 @@ contract ConfidentialPayroll is SepoliaZamaFHEVMConfig, GatewayCaller {
         emit EmployeeAdded(employee);
     }
 
-    /// @notice Pay an employee — amount stays encrypted end-to-end
+    /// @notice Remove an employee (does not wipe their encrypted balance handle).
+    function removeEmployee(address employee) external onlyEmployer {
+        require(isEmployee[employee], "Not an employee");
+        isEmployee[employee] = false;
+
+        uint256 len = employees.length;
+        for (uint256 i = 0; i < len; i++) {
+            if (employees[i] == employee) {
+                employees[i] = employees[len - 1];
+                employees.pop();
+                break;
+            }
+        }
+        emit EmployeeRemoved(employee);
+    }
+
+    /// @notice Pay an employee — amount stays encrypted end-to-end.
+    /// @dev SECURITY: FHE arithmetic does NOT revert on underflow. If we naively
+    ///      did `totalPool = TFHE.sub(totalPool, amount)` and amount > totalPool,
+    ///      the euint64 pool would wrap around to a huge value, letting the
+    ///      employer over-pay. We guard with an encrypted comparison and only
+    ///      move funds when the pool can cover the amount (otherwise pay 0).
     function payEmployee(
         address employee,
         einput  encAmount,
@@ -95,14 +117,18 @@ contract ConfidentialPayroll is SepoliaZamaFHEVMConfig, GatewayCaller {
 
         euint64 amount = TFHE.asEuint64(encAmount, inputProof);
 
+        // Encrypted guard: pay only if the pool covers it, else pay 0.
+        ebool   hasEnough  = TFHE.le(amount, totalPool);
+        euint64 safeAmount = TFHE.select(hasEnough, amount, TFHE.asEuint64(0));
+
         // Add to employee encrypted balance
         encryptedBalance[employee] = TFHE.add(
             encryptedBalance[employee],
-            amount
+            safeAmount
         );
 
-        // Deduct from pool
-        totalPool = TFHE.sub(totalPool, amount);
+        // Deduct from pool (cannot underflow now)
+        totalPool = TFHE.sub(totalPool, safeAmount);
 
         // Grant access
         TFHE.allowThis(encryptedBalance[employee]);
@@ -112,6 +138,15 @@ contract ConfidentialPayroll is SepoliaZamaFHEVMConfig, GatewayCaller {
         TFHE.allow(totalPool, employer);
 
         emit PaymentSent(employee);
+    }
+
+    /// @notice Transfer employer role to a new address.
+    function transferEmployer(address newEmployer) external onlyEmployer {
+        require(newEmployer != address(0), "Zero address");
+        address previous = employer;
+        employer = newEmployer;
+        TFHE.allow(totalPool, newEmployer);
+        emit EmployerTransferred(previous, newEmployer);
     }
 
     // -------------------------
