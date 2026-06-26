@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useAccount, useWriteContract } from 'wagmi'
+import { isAddress } from 'viem'
 import { encryptAmount } from '@/lib/fhevm'
 import { CONTRACTS, INVOICE_ABI, isConfigured } from '@/lib/contracts'
 import { useRouter } from 'next/navigation'
@@ -34,12 +35,28 @@ export default function NewInvoicePage() {
     setAiLoading(false)
   }
 
+  // Pre-flight validation that mirrors the on-chain require() checks in
+  // ConfidentialInvoice.createInvoice. Catching these client-side avoids
+  // wasting gas on a transaction that would revert with an opaque message.
+  const validate = (): string | null => {
+    if (!address) return 'Connect your wallet first'
+    if (!form.client || !form.description || !form.amount) return 'Fill all required fields'
+    if (!isAddress(form.client)) return 'Client wallet address is not a valid Ethereum address'
+    if (form.client.toLowerCase() === address.toLowerCase()) return 'Client cannot be your own wallet address'
+    const amountNum = parseFloat(form.amount)
+    if (!Number.isFinite(amountNum) || amountNum <= 0) return 'Amount must be greater than 0'
+    if (form.dueDate) {
+      const dueTs = Math.floor(new Date(form.dueDate).getTime() / 1000)
+      if (!Number.isFinite(dueTs)) return 'Due date is invalid'
+      if (dueTs <= Math.floor(Date.now() / 1000)) return 'Due date must be in the future'
+    }
+    return null
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!address) { setError('Connect your wallet first'); return }
-    if (!form.client || !form.description || !form.amount) {
-      setError('Fill all required fields'); return
-    }
+    const validationError = validate()
+    if (validationError) { setError(validationError); return }
 
     setLoading(true)
     setError(null)
@@ -56,9 +73,9 @@ export default function NewInvoicePage() {
 
       const amountMicro = Math.round(parseFloat(form.amount) * 1e6)
 
-      // FIX: dueDate is a required arg on the contract (Solidity requires
-      // `dueDate > block.timestamp`). Convert the form's YYYY-MM-DD to a unix
-      // timestamp. Default to +14d if left blank.
+      // dueDate is a required arg on the contract (Solidity requires
+      // `dueDate > block.timestamp`). Convert YYYY-MM-DD to a unix timestamp.
+      // Default to +14d if left blank.
       const dueTs = form.dueDate
         ? Math.floor(new Date(form.dueDate).getTime() / 1000)
         : Math.floor(Date.now() / 1000) + 14 * 86400
@@ -67,10 +84,10 @@ export default function NewInvoicePage() {
       const { handle, inputProof } = await encryptAmount(
         amountMicro,
         CONTRACTS.ConfidentialInvoice.address,
-        address
+        address as `0x${string}`
       )
 
-      // Call the smart contract — args now match the ABI (5 args incl dueDate)
+      // Call the smart contract — args match the ABI (5 args incl dueDate)
       await writeContractAsync({
         address: CONTRACTS.ConfidentialInvoice.address,
         abi:     INVOICE_ABI,
