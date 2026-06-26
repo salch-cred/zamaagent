@@ -2,16 +2,16 @@
 import { motion } from 'framer-motion'
 
 const guides = [
-  { id: 1, chapter: 'Guide 1', title: 'Setup & Connect',  roman: 'I',   subtitle: 'Connect wallet, configure Sepolia, fund with test ETH.',          color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#22C55E' },
-  { id: 2, chapter: 'Guide 2', title: 'Create Invoice',   roman: 'II',  subtitle: 'Let the AI agent draft and send an FHE-encrypted invoice.',       color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#8B5CF6' },
-  { id: 3, chapter: 'Guide 3', title: 'Reveal Balance',   roman: 'III', subtitle: 'EIP-712 sign, reencrypt with fhevmjs, see your earnings.',         color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#3B82F6' },
-  { id: 4, chapter: 'Guide 4', title: 'Build Reputation', roman: 'IV',  subtitle: 'Paid invoices mint ERC-8004 on-chain credentials.',                 color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#F59E0B' },
+  { id: 1, chapter: 'Guide 1', title: 'Setup & Connect',  roman: 'I',   subtitle: 'Connect wallet, configure Sepolia, fund with test ETH.',    color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#22C55E' },
+  { id: 2, chapter: 'Guide 2', title: 'Create Invoice',   roman: 'II',  subtitle: 'AI agent drafts and sends an FHE-encrypted invoice.',       color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#8B5CF6' },
+  { id: 3, chapter: 'Guide 3', title: 'Reveal Balance',   roman: 'III', subtitle: 'EIP-712 sign, reencrypt with fhevmjs, see your earnings.',  color: 'bg-zinc-900 text-zinc-100 border-zinc-700', accent: '#3B82F6' },
+  { id: 4, chapter: 'Guide 4', title: 'Build Reputation', roman: 'IV',  subtitle: 'Paid invoices mint ERC-8004 on-chain credentials.',          color: 'bg-zinc-800 text-zinc-100 border-zinc-700', accent: '#F59E0B' },
 ]
 
 const bookFade = (i: number) => ({
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true },
+  initial:    { opacity: 0, y: 24 },
+  whileInView:{ opacity: 1, y: 0 },
+  viewport:   { once: true },
   transition: { duration: 0.5, delay: i * 0.1, ease: 'easeOut' },
 })
 
@@ -37,16 +37,12 @@ export function Guides() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
           {guides.map((guide, i) => (
-            <motion.div
-              key={guide.id}
-              {...bookFade(i)}
-              className="book-container flex flex-col items-center cursor-pointer"
-            >
+            <motion.div key={guide.id} {...bookFade(i)} className="book-container flex flex-col items-center cursor-pointer">
               <motion.div
                 {...hoverTilt}
                 className={`book-card relative w-[140px] md:w-[175px] aspect-[3/4.2] rounded-r-lg border shadow-xl flex flex-col justify-between p-4 md:p-5 ${guide.color}`}
               >
-                {/* Spine accent — single braces, no double-brace issue */}
+                {/* Coloured spine line */}
                 <div
                   className="absolute top-0 bottom-0 left-[3px] w-[2px] rounded-full"
                   style= backgroundColor: guide.accent 
