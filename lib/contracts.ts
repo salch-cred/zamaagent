@@ -12,7 +12,7 @@ function addr(name: string): `0x${string}` {
 export const CONTRACTS = {
   ConfidentialPayroll: {
     address: addr('NEXT_PUBLIC_PAYROLL_ADDRESS'),
-    chainId: 11155111, // Sepolia
+    chainId: 11155111,
   },
   ConfidentialInvoice: {
     address: addr('NEXT_PUBLIC_INVOICE_ADDRESS'),
@@ -28,30 +28,24 @@ export const CONTRACTS = {
   },
 } as const
 
-// Convenience flag — true once real addresses are configured.
-// Components use it to decide between mock data and on-chain reads.
 export const isConfigured = (): boolean =>
   CONTRACTS.ConfidentialPayroll.address !== ZERO &&
   CONTRACTS.ConfidentialInvoice.address !== ZERO
 
-// True once the reputation registry is deployed + configured.
 export const isReputationConfigured = (): boolean =>
   CONTRACTS.ConfidentialReputation.address !== ZERO
 
 // ---------------------------------------------------------------------------
-// ABIs
-//
-// `einput` / `euint64` are fhEVM ciphertext types. From TS we pass them as:
-//   - handle  → `bytes32`   (encrypted value committed on-chain)
-//   - proof   → `bytes`     (zk proof that the handle is well-formed)
-//
-// NOTE on ConfidentialInvoice.createInvoice: the Solidity contract in
-// DEV FILE 5 takes a `dueDate` argument, but the ABI in DEV FILE 1/4 omits
-// it (4 args). The form also never sends a dueDate. I've added dueDate to
-// the ABI here so the two stay consistent; `invoices/new` passes it too.
+// Payroll ABI
 // ---------------------------------------------------------------------------
-
 export const PAYROLL_ABI = [
+  {
+    name: 'employer',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
   {
     name: 'depositPayroll',
     type: 'function',
@@ -64,6 +58,13 @@ export const PAYROLL_ABI = [
   },
   {
     name: 'addEmployee',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'employee', type: 'address' }],
+    outputs: [],
+  },
+  {
+    name: 'removeEmployee',
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [{ name: 'employee', type: 'address' }],
@@ -85,7 +86,7 @@ export const PAYROLL_ABI = [
     type: 'function',
     stateMutability: 'view',
     inputs: [],
-    outputs: [{ name: '', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'uint256' }],
   },
   {
     name: 'isEmployee',
@@ -101,19 +102,52 @@ export const PAYROLL_ABI = [
     inputs: [],
     outputs: [{ name: '', type: 'uint256' }],
   },
+  {
+    name: 'getEmployees',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address[]' }],
+  },
 ] as const
 
+// ---------------------------------------------------------------------------
+// Invoice ABI
+// ---------------------------------------------------------------------------
 export const INVOICE_ABI = [
+  {
+    name: 'invoiceCount',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'invoices',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'invoiceId', type: 'uint256' }],
+    outputs: [
+      { name: 'freelancer',      type: 'address' },
+      { name: 'client',          type: 'address' },
+      { name: 'amount',          type: 'uint256' },
+      { name: 'isPaid',          type: 'bool' },
+      { name: 'isDisputed',      type: 'bool' },
+      { name: 'createdAt',       type: 'uint256' },
+      { name: 'dueDate',         type: 'uint256' },
+      { name: 'workDescription', type: 'string' },
+    ],
+  },
   {
     name: 'createInvoice',
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'client', type: 'address' },
-      { name: 'encAmount', type: 'bytes32' },
-      { name: 'inputProof', type: 'bytes' },
+      { name: 'client',      type: 'address' },
+      { name: 'encAmount',   type: 'bytes32' },
+      { name: 'inputProof',  type: 'bytes' },
       { name: 'description', type: 'string' },
-      { name: 'dueDate', type: 'uint256' },
+      { name: 'dueDate',     type: 'uint256' },
     ],
     outputs: [{ name: '', type: 'uint256' }],
   },
@@ -136,7 +170,7 @@ export const INVOICE_ABI = [
     type: 'function',
     stateMutability: 'view',
     inputs: [{ name: 'invoiceId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'uint256' }],
   },
   {
     name: 'getFreelancerInvoices',
@@ -146,20 +180,28 @@ export const INVOICE_ABI = [
     outputs: [{ name: '', type: 'uint256[]' }],
   },
   {
+    name: 'getClientInvoices',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'client', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256[]' }],
+  },
+  {
     name: 'getInvoiceStatus',
     type: 'function',
     stateMutability: 'view',
     inputs: [{ name: 'invoiceId', type: 'uint256' }],
     outputs: [
-      { name: 'isPaid', type: 'bool' },
+      { name: 'isPaid',     type: 'bool' },
       { name: 'isDisputed', type: 'bool' },
-      { name: 'dueDate', type: 'uint256' },
+      { name: 'dueDate',    type: 'uint256' },
     ],
   },
 ] as const
 
-// ReputationRegistry — public, verifiable reputation. Scores are plaintext by
-// design; only payment AMOUNTS stay encrypted (in ConfidentialInvoice).
+// ---------------------------------------------------------------------------
+// Reputation ABI
+// ---------------------------------------------------------------------------
 export const REPUTATION_ABI = [
   {
     name: 'reputationScore',
@@ -199,12 +241,12 @@ export const REPUTATION_ABI = [
         name: '',
         type: 'tuple',
         components: [
-          { name: 'subject', type: 'address' },
-          { name: 'issuer', type: 'address' },
+          { name: 'subject',   type: 'address' },
+          { name: 'issuer',    type: 'address' },
           { name: 'invoiceId', type: 'uint256' },
-          { name: 'category', type: 'string' },
-          { name: 'issuedAt', type: 'uint64' },
-          { name: 'revoked', type: 'bool' },
+          { name: 'category',  type: 'string' },
+          { name: 'issuedAt',  type: 'uint64' },
+          { name: 'revoked',   type: 'bool' },
         ],
       },
     ],
@@ -214,10 +256,10 @@ export const REPUTATION_ABI = [
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'subject', type: 'address' },
-      { name: 'issuer', type: 'address' },
+      { name: 'subject',   type: 'address' },
+      { name: 'issuer',    type: 'address' },
       { name: 'invoiceId', type: 'uint256' },
-      { name: 'category', type: 'string' },
+      { name: 'category',  type: 'string' },
     ],
     outputs: [{ name: '', type: 'uint256' }],
   },
