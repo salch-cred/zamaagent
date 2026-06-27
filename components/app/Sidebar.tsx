@@ -7,19 +7,22 @@ const navItems = [
   { icon: '🏠', label: 'Dashboard',  href: '/app/dashboard'  },
   { icon: '📄', label: 'Invoices',   href: '/app/invoices'   },
   { icon: '💰', label: 'Earnings',   href: '/app/earnings'   },
+  { icon: '🔐', label: 'Vesting',    href: '/app/vesting'    },
   { icon: '🏆', label: 'Reputation', href: '/app/reputation' },
   { icon: '⚡',  label: 'Payouts',    href: '/app/payouts'    },
   { icon: '🎁', label: 'Airdrop',    href: '/app/airdrop',   badge: 'Bounty' },
+  { icon: '🗂️', label: 'Wrappers',  href: '/app/wrappers',  badge: 'Bounty' },
+  { icon: '📜', label: 'History',    href: '/app/history'    },
   { icon: '🤖', label: 'AI Agent',   href: '/app/agent'      },
   { icon: '⚙️', label: 'Settings',  href: '/app/settings'   },
 ]
 
 export function Sidebar() {
-  const pathname  = usePathname()
+  const pathname    = usePathname()
   const { address } = useAccount()
 
   const short = address
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
+    ? address.slice(0, 6) + '...' + address.slice(-4)
     : 'Not connected'
 
   return (
@@ -42,15 +45,14 @@ export function Sidebar() {
       <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = pathname === item.href
+          const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all '
+          const activeClass = 'bg-zinc-800 text-white font-medium'
+          const inactiveClass = 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all ${
-                isActive
-                  ? 'bg-zinc-800 text-white font-medium'
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-900'
-              }`}
+              className={baseClass + (isActive ? activeClass : inactiveClass)}
             >
               <span className="text-base w-5 text-center">{item.icon}</span>
               <span className="flex-1">{item.label}</span>
@@ -67,7 +69,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* FHE Status indicator */}
+      {/* FHE Status */}
       <div className="px-4 pb-2">
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-900/50 border border-zinc-800">
           <div className="w-2 h-2 rounded-full bg-brand animate-pulse flex-shrink-0" />
