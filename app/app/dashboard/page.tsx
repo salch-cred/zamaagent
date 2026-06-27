@@ -3,6 +3,7 @@ import { useAccount, useReadContract, useReadContracts } from 'wagmi'
 import { EncryptedAmount } from '@/components/app/EncryptedAmount'
 import { AgentProactiveCard } from '@/components/app/AgentProactiveCard'
 import { InvoiceRow, type Invoice, type InvoiceStatus } from '@/components/app/InvoiceRow'
+import MorphoYieldCard from '@/components/app/MorphoYieldCard'
 import Link from 'next/link'
 import { CONTRACTS, INVOICE_ABI, REPUTATION_ABI, isConfigured, isReputationConfigured } from '@/lib/contracts'
 
@@ -38,7 +39,6 @@ export default function DashboardPage() {
 
   const shortAddr = address ? address.slice(0, 6) + '...' + address.slice(-4) : ''
 
-  // Freelancer invoice IDs
   const { data: freelancerIds } = useReadContract({
     address: CONTRACTS.ConfidentialInvoice.address,
     abi: INVOICE_ABI,
@@ -89,19 +89,16 @@ export default function DashboardPage() {
     : null
 
   const displayInvoices = liveInvoices ?? MOCK_INVOICES
-
   const pendingCount = liveInvoices
     ? liveInvoices.filter(i => i.status === 'PENDING' || i.status === 'OVERDUE').length
     : 3
-
   const displayScore = repEnabled && scoreData !== undefined ? Number(scoreData) : 847
 
-  // Style for reputation progress bar — extracted const avoids inline double-brace
   const repBarStyle = { width: (displayScore / 10).toFixed(0) + '%' }
 
   return (
-    <div className="max-w-5xl">
-      <div className="mb-8">
+    <div className="max-w-5xl space-y-6">
+      <div className="mb-2">
         <h2 className="text-2xl font-bold text-white mb-1">
           Welcome back{shortAddr ? ', ' + shortAddr : ''} 👋
         </h2>
@@ -110,7 +107,8 @@ export default function DashboardPage() {
 
       <AgentProactiveCard />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 col-span-2 lg:col-span-1">
           <div className="text-xs text-zinc-500 mb-3 uppercase tracking-wide">Total Earned</div>
           <EncryptedAmount size="md" handle={undefined} />
@@ -133,28 +131,61 @@ export default function DashboardPage() {
 
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
           <div className="text-xs text-zinc-500 mb-3 uppercase tracking-wide">Yield APY</div>
-          <div className="font-mono text-2xl font-bold text-blue-400">4.2%</div>
-          <div className="text-xs text-zinc-500 mt-1">Morpho vault • auto</div>
+          <div className="font-mono text-2xl font-bold text-emerald-400">5.8%</div>
+          <div className="text-xs text-zinc-500 mt-1">Morpho vault • live</div>
         </div>
       </div>
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
-          <h3 className="font-semibold text-white">Recent Invoices</h3>
-          <Link href="/app/invoices" className="text-sm text-brand hover:underline">View all</Link>
+      {/* Main content grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Invoices - 2/3 width */}
+        <div className="lg:col-span-2">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800">
+              <h3 className="font-semibold text-white">Recent Invoices</h3>
+              <Link href="/app/invoices" className="text-sm text-brand hover:underline">View all</Link>
+            </div>
+            <div className="divide-y divide-zinc-800/50">
+              {displayInvoices.map((inv) => (
+                <InvoiceRow key={inv.id} invoice={inv} />
+              ))}
+            </div>
+            <div className="px-6 py-4 border-t border-zinc-800">
+              <Link
+                href="/app/invoices/new"
+                className="flex items-center justify-center gap-2 w-full py-3 border border-dashed border-zinc-700 rounded-xl text-sm text-zinc-500 hover:text-white hover:border-zinc-500 transition-all"
+              >
+                <span>+</span> Create new invoice
+              </Link>
+            </div>
+          </div>
         </div>
-        <div className="divide-y divide-zinc-800/50">
-          {displayInvoices.map((inv) => (
-            <InvoiceRow key={inv.id} invoice={inv} />
-          ))}
-        </div>
-        <div className="px-6 py-4 border-t border-zinc-800">
-          <Link
-            href="/app/invoices/new"
-            className="flex items-center justify-center gap-2 w-full py-3 border border-dashed border-zinc-700 rounded-xl text-sm text-zinc-500 hover:text-white hover:border-zinc-500 transition-all"
-          >
-            <span>+</span> Create new invoice
-          </Link>
+
+        {/* Morpho Yield Card - 1/3 width */}
+        <div className="lg:col-span-1">
+          <MorphoYieldCard />
+
+          {/* Quick links */}
+          <div className="mt-4 bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-2">
+            <div className="text-xs text-zinc-500 font-medium uppercase tracking-wide mb-3">Quick Actions</div>
+            {[
+              { href: '/app/airdrop', icon: '🎁', label: 'Confidential Airdrop', badge: 'Bounty' },
+              { href: '/app/invoices/new', icon: '📄', label: 'New Invoice' },
+              { href: '/app/reputation', icon: '🏆', label: 'View Reputation' },
+            ].map(item => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"
+              >
+                <span>{item.icon}</span>
+                <span className="flex-1">{item.label}</span>
+                {item.badge && (
+                  <span className="text-[9px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.5 rounded-full">{item.badge}</span>
+                )}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </div>

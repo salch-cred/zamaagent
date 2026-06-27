@@ -9,6 +9,7 @@ const navItems = [
   { icon: '💰', label: 'Earnings',   href: '/app/earnings'   },
   { icon: '🏆', label: 'Reputation', href: '/app/reputation' },
   { icon: '⚡',  label: 'Payouts',    href: '/app/payouts'    },
+  { icon: '🎁', label: 'Airdrop',    href: '/app/airdrop',   badge: 'Bounty' },
   { icon: '🤖', label: 'AI Agent',   href: '/app/agent'      },
   { icon: '⚙️', label: 'Settings',  href: '/app/settings'   },
 ]
@@ -30,7 +31,10 @@ export function Sidebar() {
           <div className="w-8 h-8 bg-brand rounded-lg flex items-center justify-center text-black font-bold text-sm">
             P
           </div>
-          <span className="font-semibold text-white text-lg tracking-tight">PayMate</span>
+          <div>
+            <span className="font-semibold text-white text-lg tracking-tight">PayMate</span>
+            <div className="text-[10px] text-zinc-500 leading-none mt-0.5">Zama fhEVM • Season 3</div>
+          </div>
         </Link>
       </div>
 
@@ -49,14 +53,27 @@ export function Sidebar() {
               }`}
             >
               <span className="text-base w-5 text-center">{item.icon}</span>
-              <span>{item.label}</span>
+              <span className="flex-1">{item.label}</span>
+              {item.badge && (
+                <span className="text-[9px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.5 rounded-full font-medium">
+                  {item.badge}
+                </span>
+              )}
               {isActive && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-brand" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand flex-shrink-0" />
               )}
             </Link>
           )
         })}
       </nav>
+
+      {/* FHE Status indicator */}
+      <div className="px-4 pb-2">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-900/50 border border-zinc-800">
+          <div className="w-2 h-2 rounded-full bg-brand animate-pulse flex-shrink-0" />
+          <span className="text-[10px] text-zinc-500">FHE coprocessor active</span>
+        </div>
+      </div>
 
       {/* Wallet footer */}
       <div className="p-4 border-t border-zinc-800">
