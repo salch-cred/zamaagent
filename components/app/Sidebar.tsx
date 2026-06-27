@@ -8,6 +8,7 @@ const navItems = [
   { icon: '📄', label: 'Invoices',   href: '/app/invoices'   },
   { icon: '💰', label: 'Earnings',   href: '/app/earnings'   },
   { icon: '🔐', label: 'Vesting',    href: '/app/vesting'    },
+  { icon: '🛡️', label: 'MultiSig',  href: '/app/multisig',  badge: 'New' },
   { icon: '🏆', label: 'Reputation', href: '/app/reputation' },
   { icon: '⚡',  label: 'Payouts',    href: '/app/payouts'    },
   { icon: '🎁', label: 'Airdrop',    href: '/app/airdrop',   badge: 'Bounty' },
@@ -44,9 +45,9 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href
-          const baseClass = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all '
-          const activeClass = 'bg-zinc-800 text-white font-medium'
+          const isActive   = pathname === item.href
+          const baseClass  = 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all '
+          const activeClass   = 'bg-zinc-800 text-white font-medium'
           const inactiveClass = 'text-zinc-400 hover:text-white hover:bg-zinc-900'
           return (
             <Link
@@ -57,7 +58,11 @@ export function Sidebar() {
               <span className="text-base w-5 text-center">{item.icon}</span>
               <span className="flex-1">{item.label}</span>
               {item.badge && (
-                <span className="text-[9px] bg-purple-500/20 text-purple-400 border border-purple-500/30 px-1.5 py-0.5 rounded-full font-medium">
+                <span className={'text-[9px] px-1.5 py-0.5 rounded-full font-medium border ' +
+                  (item.badge === 'New'
+                    ? 'bg-brand/20 text-brand border-brand/30'
+                    : 'bg-purple-500/20 text-purple-400 border-purple-500/30')
+                }>
                   {item.badge}
                 </span>
               )}
